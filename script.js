@@ -14,21 +14,35 @@ function addToLibrary(obj) {
   while (container.childNodes.length > 2) {
     container.removeChild(container.lastChild);
   }
-  myLibrary.push(obj);
+  let i = 0;
+  if (obj !== undefined) {
+    myLibrary.push(obj);
+  }
   myLibrary.forEach((book) => {
     const card = document.createElement('div');
     card.classList.add('card');
+    const removeBookButton = document.createElement('button');
+    card.appendChild(removeBookButton);
+    removeBookButton.dataset.index = i;
+    removeBookButton.textContent = '×';
     container.appendChild(card);
+    i++;
     for (const property in book) {
       const para = document.createElement('p');
       card.appendChild(para);
       para.textContent = `${firstLetterCapital(property)}: ${firstLetterCapital(book[property])}`;
     }
+    removeBookButton.addEventListener('click', (e) => {
+      myLibrary.splice(e.currentTarget.dataset.index, 1);
+      addToLibrary();
+    });
   });
 }
 
+
 addBookButton.addEventListener('click', () => {
   const form = document.createElement('form');
+  const cancelFormButton = document.createElement('button');
   const author = document.createElement('input');
   const title = document.createElement('input');
   const pages = document.createElement('input');
@@ -36,17 +50,24 @@ addBookButton.addEventListener('click', () => {
   const s = document.createElement('button');
   form.setAttribute('class', 'book-form');
   container.appendChild(form);
+  cancelFormButton.setAttribute('type', 'button');
+  cancelFormButton.textContent = '×';
+  form.appendChild(cancelFormButton);
+  cancelFormButton.addEventListener('click', () => {
+    form.remove();
+  });
   author.setAttribute('type', 'text');
   author.setAttribute('name', 'author');
-  author.setAttribute('id', 'author');
+  author.required = true;
   form.appendChild(author);
   title.setAttribute('type', 'text');
   title.setAttribute('name', 'title');
-  title.setAttribute('id', 'title');
+  title.required = true;
   form.appendChild(title);
   pages.setAttribute('type', 'number');
   pages.setAttribute('name', 'pages');
-  pages.setAttribute('id', 'pages');
+  pages.setAttribute('min', '1');
+  pages.required = true;
   form.appendChild(pages);
   read.setAttribute('type', 'button');
   read.textContent = 'not read';
@@ -57,9 +78,9 @@ addBookButton.addEventListener('click', () => {
   form.appendChild(read);
   s.setAttribute('type', 'submit');
   form.appendChild(s);
-  s.addEventListener('click', (e) => {
-    new Book(author.value, title.value, pages.value, read.textContent);
+  form.addEventListener('submit', (e) => {
     e.preventDefault();
+    new Book(author.value, title.value, pages.value, read.textContent);
   });
 });
 
