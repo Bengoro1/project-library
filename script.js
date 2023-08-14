@@ -25,12 +25,32 @@ function addToLibrary(obj) {
     card.appendChild(removeBookButton);
     removeBookButton.dataset.index = i;
     removeBookButton.textContent = '×';
+    removeBookButton.setAttribute('class', 'remove-book');
     container.appendChild(card);
     i++;
     for (const property in book) {
-      const para = document.createElement('p');
-      card.appendChild(para);
-      para.textContent = `${firstLetterCapital(property)}: ${firstLetterCapital(book[property])}`;
+      if (property !== 'read') {
+        const para = document.createElement('p');
+        card.appendChild(para);
+        para.textContent = `${firstLetterCapital(property)}: ${firstLetterCapital(book[property])}`;
+      } else {
+        const b = document.createElement('button');
+        card.appendChild(b);
+        b.style.color = 'white';
+        b.addEventListener('click', () => {
+          b.classList.toggle('read');
+          b.className === 'read' ? b.textContent = 'read' : b.textContent = 'not read';
+          b.className === 'read' ? b.style.backgroundColor = 'green' : b.style.backgroundColor = 'red';
+        });
+        if (book[property] === 'read') {
+          b.setAttribute('class', 'read');
+          b.textContent = 'read';
+          b.style.backgroundColor = 'green';
+        } else {
+          b.textContent = 'not read';
+          b.style.backgroundColor = 'red';
+        }
+      }
     }
     removeBookButton.addEventListener('click', (e) => {
       myLibrary.splice(e.currentTarget.dataset.index, 1);
@@ -39,18 +59,22 @@ function addToLibrary(obj) {
   });
 }
 
+let bookForm;
 
 addBookButton.addEventListener('click', () => {
+  if (container.contains(bookForm)) {return}
   const form = document.createElement('form');
-  const cancelFormButton = document.createElement('button');
   const author = document.createElement('input');
   const title = document.createElement('input');
   const pages = document.createElement('input');
   const read = document.createElement('button');
   const s = document.createElement('button');
+  const cancelFormButton = document.createElement('button');
   form.setAttribute('class', 'book-form');
   container.appendChild(form);
+  bookForm = document.querySelector('.book-form'); 
   cancelFormButton.setAttribute('type', 'button');
+  cancelFormButton.setAttribute('class', 'cancelForm');
   cancelFormButton.textContent = '×';
   form.appendChild(cancelFormButton);
   cancelFormButton.addEventListener('click', () => {
@@ -59,6 +83,8 @@ addBookButton.addEventListener('click', () => {
   author.setAttribute('type', 'text');
   author.setAttribute('name', 'author');
   author.required = true;
+  title.placeholder = 'Title';
+  author.placeholder = 'Author';
   form.appendChild(author);
   title.setAttribute('type', 'text');
   title.setAttribute('name', 'title');
@@ -68,15 +94,22 @@ addBookButton.addEventListener('click', () => {
   pages.setAttribute('name', 'pages');
   pages.setAttribute('min', '1');
   pages.required = true;
+  pages.placeholder = 'Pages';
   form.appendChild(pages);
   read.setAttribute('type', 'button');
-  read.textContent = 'not read';
+  read.setAttribute('class', 'read');
+  read.textContent = 'read';
+  read.style.color = 'white';
+  read.style.backgroundColor = 'green';
   read.addEventListener('click', () => {
     read.classList.toggle('read');
     read.className === 'read' ? read.textContent = 'read' : read.textContent = 'not read';
+    read.className === 'read' ? read.style.backgroundColor = 'green' : read.style.backgroundColor = 'red';
   });
   form.appendChild(read);
   s.setAttribute('type', 'submit');
+  form.appendChild(s);
+  s.textContent = 'Add book to library';
   form.appendChild(s);
   form.addEventListener('submit', (e) => {
     e.preventDefault();
