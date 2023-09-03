@@ -2,12 +2,14 @@ const container = document.querySelector('.container');
 const addBookButton = document.getElementById('addBookButton');
 let myLibrary = [];
 
-function Book(author, title, pages, read) {
-  this.author = author;
-  this.title = title;
-  this.pages = pages;
-  this.read = read;
-  addToLibrary(this);
+class Book {
+  constructor (author, title, pages, read) {
+    this.author = author;
+    this.title = title;
+    this.pages = pages;
+    this.read = read;
+    addToLibrary(this);
+  }
 }
 
 function addToLibrary(obj) {
